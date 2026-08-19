@@ -29,12 +29,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Lowercase ghcr owner
+        id: lower_owner
+        run: echo "owner=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_OUTPUT"
+
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: ./container
           platforms: linux/amd64
           push: true
-          tags: ghcr.io/${{ lower(github.repository_owner) }}/cairn-worker-container:latest
-          cache-from: type=registry,ref=ghcr.io/${{ lower(github.repository_owner) }}/cairn-worker-container:buildcache
-          cache-to: type=registry,ref=ghcr.io/${{ lower(github.repository_owner) }}/cairn-worker-container:buildcache,mode=max
+          tags: ghcr.io/${{ steps.lower_owner.outputs.owner }}/cairn-worker-container:latest
+          cache-from: type=registry,ref=ghcr.io/${{ steps.lower_owner.outputs.owner }}/cairn-worker-container:buildcache
+          cache-to: type=registry,ref=ghcr.io/${{ steps.lower_owner.outputs.owner }}/cairn-worker-container:buildcache,mode=max
