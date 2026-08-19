@@ -63,6 +63,7 @@ def list_projects():
                 status=row["status"],
                 bootstrap_enabled=bool(row["bootstrap_enabled"]),
                 created_at=row["created_at"],
+                difficulty=row["difficulty"],
                 reason=project_reason_from_row(row),
                 fact_count=row["fact_count"],
                 intent_count=row["intent_count"],
@@ -81,8 +82,8 @@ def create_project(body: CreateProjectRequest):
         now = utcnow()
 
         conn.execute(
-            "INSERT INTO projects (id, title, status, bootstrap_enabled, created_at) VALUES (?, ?, 'active', ?, ?)",
-            (pid, body.title, body.bootstrap_enabled, now),
+            "INSERT INTO projects (id, title, status, bootstrap_enabled, created_at, difficulty) VALUES (?, ?, 'active', ?, ?, ?)",
+            (pid, body.title, body.bootstrap_enabled, now, body.difficulty),
         )
         conn.execute(
             "INSERT INTO facts (id, project_id, description) VALUES (?, ?, ?)",
@@ -110,6 +111,7 @@ def create_project(body: CreateProjectRequest):
                 status="active",
                 bootstrap_enabled=body.bootstrap_enabled,
                 created_at=now,
+                difficulty=body.difficulty,
                 reason=None,
             ),
             facts=[

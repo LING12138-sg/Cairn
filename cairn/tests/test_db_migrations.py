@@ -68,3 +68,39 @@ def test_configure_maps_disabled_bootstrap_mode_to_false(tmp_path, monkeypatch) 
         ("proj_001", 0),
         ("proj_002", 1),
     ]
+
+
+def test_configure_adds_concluded_columns_to_legacy_intents_table(tmp_path, monkeypatch) -> None:
+    path = tmp_path / "legacy.db"
+    with sqlite3.connect(path) as conn:
+        conn.execute(
+            """
+            CREATE TABLE intents (
+                id TEXT NOT NULL,
+                project_id TEXT NOT NULL,
+                to_fact_id TEXT,
+                description TEXT NOT NULL,
+                creator TEXT NOT NULL,
+                worker TEXT,
+                last_heartbeat_at TEXT,
+                created_at TEXT NOT NULL,
+                concluded_at TEXT,
+                PRIMARY KEY (id, project_id)
+            )
+            """
+        )
+        conn.execute(
+            "INSERT INTO intents (id, project_id, description, creator, created_at) "
+            "VALUES ('i001', 'proj_001', 'investigate', 'reasoner', '2026-01-01T00:00:00Z')"
+        )
+
+    monkeypatch.setattr(db, "_db_path", None)
+    db.configure(path)
+
+    with db.get_conn() as conn:
+        columns = {row["name"] for row in conn.execute("PRAGMA table_info(intents)")}
+        assert "concluded_as" in columns
+        assert "retry_count" in columns
+        row = conn.execute("SELECT concluded_as, retry_count FROM intents WHERE id = 'i001'").fetchone()
+    assert row["concluded_as"] is None
+    assert row["retry_count"] == 0

@@ -116,6 +116,7 @@ class FakeClient:
     created_intents: list[tuple[str, list[str], str, str]] = field(default_factory=list)
     released: list[tuple[str, str, str]] = field(default_factory=list)
     released_reasons: list[tuple[str, str]] = field(default_factory=list)
+    failures: list[tuple[str, str, str]] = field(default_factory=list)
 
     def get_project(self, _project_id: str) -> ProjectDetail:
         return self.project
@@ -138,6 +139,17 @@ class FakeClient:
 
     def release_reason(self, project_id: str, worker: str) -> ApiResult:
         self.released_reasons.append((project_id, worker))
+        return ApiResult(200, {})
+
+    def record_failure(
+        self,
+        project_id: str,
+        intent_id: str,
+        worker: str,
+        stale_retry_threshold: int = 3,
+        dead_retry_threshold: int = 10,
+    ) -> ApiResult:
+        self.failures.append((project_id, intent_id, worker))
         return ApiResult(200, {})
 
     def heartbeat(self, _project_id: str, _intent_id: str, _worker: str) -> ApiResult:

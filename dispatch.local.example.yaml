@@ -24,6 +24,8 @@ runtime:
   interval: 3
   healthcheck_timeout: 15
   prompt_group: "default"
+  stale_retry_threshold: 3
+  dead_retry_threshold: 10
 
 tasks:
   bootstrap:

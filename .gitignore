@@ -1,6 +1,10 @@
 .vscode/
+.idea/
 .DS_Store
 __pycache__/
 .playwright-cli/
 datas/
 dispatch.yaml
+dispatch.yaml.bak
+scripts/projects_map.json
+scripts/competition.yaml

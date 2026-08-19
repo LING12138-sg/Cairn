@@ -171,6 +171,8 @@ class RuntimeConfig(BaseModel):
     worker_healthcheck: WorkerHealthcheckMode = "startup_only"
     execution: ExecutionMode = "container"
     prompt_group: str = Field(min_length=1)
+    stale_retry_threshold: int = Field(default=3, ge=1)
+    dead_retry_threshold: int = Field(default=10, ge=1)
 
 
 class WorkerConfig(BaseModel):
@@ -182,6 +184,8 @@ class WorkerConfig(BaseModel):
     max_running: int = Field(gt=0)
     priority: int = Field(ge=0)
     env: dict[str, str] = Field(default_factory=dict)
+    # 可选:该 worker 能处理的题目难度(如 ["VERY_EASY","EASY"])。不配置 = 所有难度都行。
+    difficulties: list[str] | None = None
 
     @field_validator("task_types")
     @classmethod

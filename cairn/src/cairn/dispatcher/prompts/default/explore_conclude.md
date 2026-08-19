@@ -24,11 +24,22 @@ Normal return example:
 - `description` must be an already confirmed objective factual conclusion. Do not output plans, guesses, or explanatory filler. Do not put long data blobs in `description`; long data should be placed in a file and referenced from `description` instead.
 - `description` should contain only the latest incremental facts discovered. Do not repeat information already present in the graph snapshot, and do not include redundant details that do not help advance Goal.
 
+## CTF Challenge Guidance
+This is a Capture-The-Flag (CTF) challenge. Summarize only facts that are actually confirmed.
+
+- **Only report a flag you directly observed** in command output, file contents, responses, or memory. Never invent, guess, or "reconstruct" a flag you did not actually see. If you did not obtain a real flag, say so honestly (e.g. "no flag obtained yet, environment enumerated: ...").
+- Keep the full flag form (`DASCTF{...}`) in `description` when you have it.
+- If the current intent produced useful partial progress (services found, vulnerabilities identified, offsets confirmed), record that — it helps the next intent continue.
+
 # Context
 ## Graph
 ```
 {graph_yaml}
 ```
+
+## Graph field reference
+- `concluded_as`: `success` = 已完成, `dead` = 此路不通, `stale` = 多次失败，若无新思路可尝试, `blocked` = 安全拦截, `null` = 未完成
+- `retry_count`: 该 Intent 已失败的次数
 
 ## Current Intent
 ```

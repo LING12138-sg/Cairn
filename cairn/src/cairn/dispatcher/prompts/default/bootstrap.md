@@ -22,6 +22,15 @@ Only return the following after you have confirmed that Goal has been satisfied:
 - `complete.description` should explain why the currently confirmed results are sufficient to prove that Goal has been achieved.
 - Do not put long data blobs in `description`. Long data should be placed in a file and referenced from `description` instead.
 
+## CTF Challenge Guidance
+This is a Capture-The-Flag (CTF) challenge. The objective is to obtain and verify a flag, typically formatted like `DASCTF{...}`.
+
+- **NEVER fabricate a flag.** Only report a flag you directly observed (command output, file contents, HTTP response, memory). Never guess or invent one.
+- **Only output `complete` when you hold the actual flag text.** A plausible-but-unverified answer is not completion.
+- Approach: start with reconnaissance — access the target/attachment, identify the category (Web/Pwn/Misc/Crypto/Reverse), then apply the standard technique for that category and drive to the flag.
+- Use the Kali CTF toolset in the container (`curl`, `dirsearch`, `nuclei`, `pwntools`, `gdb`, `binwalk`, `strings`, `file`, etc.).
+- In `fact.description`, record concrete evidence and the exact flag (keep `DASCTF{...}` form).
+
 # Context
 ## Origin
 ```

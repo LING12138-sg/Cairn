@@ -22,6 +22,12 @@ runtime:
   worker_healthcheck: "startup_only"
   # Prompt set loaded from cairn/src/cairn/dispatcher/prompts/.
   prompt_group: "default"
+  # A worker intent that fails this many times is marked stale (deprioritized but
+  # still retried when no fresh intent is available).
+  stale_retry_threshold: 3
+  # A worker intent that fails this many times is marked dead (abandoned; bootstrap
+  # hands off to reason instead of retrying forever).
+  dead_retry_threshold: 10
 
 tasks:
   bootstrap:
@@ -55,15 +61,29 @@ container:
 workers:
   # Worker priority is ascending: lower numbers are preferred first.
   # max_running is per-worker concurrency. Slower backends such as Pi usually benefit from lower values.
+  # difficulties(可选):限制该 worker 处理的题目难度;不配置 = 所有难度。简单题走 flash,难题走 pro。
   - name: "claudecode_deepseek-v4-pro"
     type: "claudecode"
     task_types: [bootstrap, reason, explore]
     max_running: 2
     priority: 0
+    # difficulties: [MEDIUM, HARD]   # 难题用 pro
     env:
       ANTHROPIC_MODEL: "deepseek-v4-pro"
       ANTHROPIC_BASE_URL: "https://api.deepseek.com/anthropic"
       ANTHROPIC_AUTH_TOKEN: "sk-xxx"
+
+  # 简单题快 worker(便宜模型)。拿到阿里云 API 后按需填模型。
+  # - name: "claudecode_deepseek-v4-flash"
+  #   type: "claudecode"
+  #   task_types: [bootstrap, reason, explore]
+  #   max_running: 2
+  #   priority: 1
+  #   difficulties: [VERY_EASY, EASY]   # 简单题用 flash
+  #   env:
+  #     ANTHROPIC_MODEL: "deepseek-v4-flash"
+  #     ANTHROPIC_BASE_URL: "https://api.deepseek.com/anthropic"
+  #     ANTHROPIC_AUTH_TOKEN: "sk-xxx"
 
   # - name: "codex_qwen3.6-plus"
   #   type: "codex"

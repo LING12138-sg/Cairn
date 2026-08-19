@@ -162,6 +162,8 @@ def intent_to_model(conn: sqlite3.Connection, row: sqlite3.Row, project_id: str)
         last_heartbeat_at=row["last_heartbeat_at"],
         created_at=row["created_at"],
         concluded_at=row["concluded_at"],
+        concluded_as=row["concluded_as"],
+        retry_count=row["retry_count"],
     )
 
 
@@ -201,6 +203,7 @@ def project_meta_from_row(row: sqlite3.Row) -> ProjectMeta:
         status=row["status"],
         bootstrap_enabled=bool(row["bootstrap_enabled"]),
         created_at=row["created_at"],
+        difficulty=row["difficulty"],
         reason=project_reason_from_row(row),
     )
 

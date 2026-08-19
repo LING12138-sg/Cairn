@@ -25,6 +25,11 @@ Normal return example:
 - `fact.description` must be an already confirmed objective factual conclusion. Do not output plans, guesses, or explanatory filler.
 - Do not put long data blobs in `fact.description`. Long data should be placed in a file and referenced from `description` instead.
 
+## CTF Challenge Guidance
+This is a Capture-The-Flag (CTF) challenge. Summarize only what is actually confirmed.
+
+- **Only report a flag you directly observed.** Never invent, guess, or reconstruct a flag you did not actually see. If you did not obtain a real flag, state so honestly in `fact.description` and record any real progress made (recon results, vulnerabilities found, offsets confirmed) so the next attempt can continue.
+
 # Context
 ## Origin
 ```

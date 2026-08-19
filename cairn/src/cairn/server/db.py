@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS projects (
     status TEXT NOT NULL DEFAULT 'active',
     bootstrap_enabled INTEGER NOT NULL DEFAULT 1,
     created_at TEXT NOT NULL,
+    difficulty TEXT,
     reason_worker TEXT,
     reason_trigger TEXT,
     reason_started_at TEXT,
@@ -46,6 +47,8 @@ CREATE TABLE IF NOT EXISTS intents (
     last_heartbeat_at TEXT,
     created_at TEXT NOT NULL,
     concluded_at TEXT,
+    concluded_as TEXT,
+    retry_count INTEGER NOT NULL DEFAULT 0,
     PRIMARY KEY (id, project_id)
 );
 
@@ -91,6 +94,7 @@ def configure(path: Path) -> None:
     with get_conn() as conn:
         conn.executescript(SCHEMA)
         _ensure_project_columns(conn)
+        _ensure_intent_columns(conn)
 
 
 def _ensure_project_columns(conn: sqlite3.Connection) -> None:
@@ -101,6 +105,16 @@ def _ensure_project_columns(conn: sqlite3.Connection) -> None:
             conn.execute(
                 "UPDATE projects SET bootstrap_enabled = CASE WHEN bootstrap_mode = 'disabled' THEN 0 ELSE 1 END"
             )
+    if "difficulty" not in columns:
+        conn.execute("ALTER TABLE projects ADD COLUMN difficulty TEXT")
+
+
+def _ensure_intent_columns(conn: sqlite3.Connection) -> None:
+    columns = {row["name"] for row in conn.execute("PRAGMA table_info(intents)")}
+    if "concluded_as" not in columns:
+        conn.execute("ALTER TABLE intents ADD COLUMN concluded_as TEXT")
+    if "retry_count" not in columns:
+        conn.execute("ALTER TABLE intents ADD COLUMN retry_count INTEGER NOT NULL DEFAULT 0")
 
 
 @contextmanager

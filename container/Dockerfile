@@ -1,6 +1,8 @@
 FROM --platform=amd64 kalilinux/kali-rolling:latest
 
-RUN apt update && \
+# 固定 apt 源为 kali.download(已验证可用),彻底清掉 sources.list.d 的多余源(清华等 403)
+RUN sh -c 'echo "deb http://mirrors.aliyun.com/kali kali-rolling main non-free contrib" > /etc/apt/sources.list; rm -rf /etc/apt/sources.list.d' && \
+    apt update && \
     apt -y install kali-linux-headless && \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
@@ -9,13 +11,17 @@ RUN useradd -m -s /bin/bash kali && \
     echo "kali ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 USER kali
 
-RUN sudo apt update && \
+RUN sudo sh -c 'echo "deb http://mirrors.aliyun.com/kali kali-rolling main non-free contrib" > /etc/apt/sources.list' && \
+    sudo apt update && \
     sudo apt install -y bsdextrautils npm jq iputils-ping sshpass ncat rlwrap \
     bloodyad coercer enum4linux-ng pwncat chisel-common-binaries \
-    dirsearch yq krb5-user gitleaks naabu nikto netexec adb && \
+    dirsearch yq krb5-user gitleaks naabu nikto netexec adb \
+    gdb gdb-multiarch gdbserver ltrace strace && \
     sudo apt clean && \
     sudo rm -rf /var/lib/apt/lists/* && \
-    pip3 install pwntools pymongo --break-system-packages && \
+    pip3 install pwntools pymongo ROPgadget z3-solver --break-system-packages && \
+    pip3 install --break-system-packages --ignore-installed angr && \
+    sudo gem install one_gadget 2>/dev/null || true && \
     sudo npm install -g @playwright/cli@latest && \
     cd /tmp && playwright-cli install
 
@@ -65,8 +71,8 @@ RUN pip3 install tccli awscli --break-system-packages && \
     sudo bash -c "$(curl -fsSL https://aliyuncli.alicdn.com/install.sh)"
 
 RUN sudo npm install -g @openai/codex@0.118.0
-RUN sudo npm install -g @anthropic-ai/claude-code@2.1.98
-RUN sudo npm install -g @mariozechner/pi-coding-agent@0.73.0
+RUN sudo npm install -g @anthropic-ai/claude-code@2.1.234
+RUN sudo npm install -g @mariozechner/pi-coding-agent@0.73.1
 
 RUN sudo chmod +x /usr/local/bin/kerbrute
 RUN mkdir -p /home/kali/.config/nuclei && \

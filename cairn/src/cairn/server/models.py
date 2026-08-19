@@ -25,6 +25,8 @@ class Intent(BaseModel):
     last_heartbeat_at: str | None = None
     created_at: str
     concluded_at: str | None = None
+    concluded_as: Literal["success", "dead", "stale", "blocked"] | None = None
+    retry_count: int = 0
 
     model_config = {"populate_by_name": True}
 
@@ -49,6 +51,7 @@ class ProjectMeta(BaseModel):
     status: Literal["active", "stopped", "completed"]
     bootstrap_enabled: bool
     created_at: str
+    difficulty: str | None = None
     reason: ProjectReason | None = None
 
 
@@ -85,6 +88,7 @@ class CreateProjectRequest(BaseModel):
     origin: str
     goal: str
     bootstrap_enabled: bool = True
+    difficulty: str | None = None
     hints: list[CreateHintInline] | None = None
 
     @field_validator("title", "origin", "goal")
@@ -141,6 +145,20 @@ class CreateIntentRequest(BaseModel):
 
 class HeartbeatRequest(BaseModel):
     worker: str
+
+    @field_validator("worker")
+    @classmethod
+    def validate_non_empty_text(cls, value: str) -> str:
+        text = value.strip()
+        if not text:
+            raise ValueError("must not be empty")
+        return text
+
+
+class MarkIntentFailedRequest(BaseModel):
+    worker: str
+    stale_retry_threshold: int = Field(default=3, ge=1)
+    dead_retry_threshold: int = Field(default=10, ge=1)
 
     @field_validator("worker")
     @classmethod
