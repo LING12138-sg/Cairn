@@ -19,9 +19,11 @@ RUN sudo sh -c 'echo "deb http://kali.download/kali kali-rolling main non-free c
     gdb gdb-multiarch gdbserver ltrace strace && \
     sudo apt clean && \
     sudo rm -rf /var/lib/apt/lists/* && \
-    pip3 install pwntools pymongo ROPgadget z3-solver --break-system-packages && \
-    pip3 install --break-system-packages --ignore-installed angr && \
-    sudo gem install one_gadget 2>/dev/null || true && \
+    # Python 3.14 兼容:先装新版 unicorn(旧版无法在 3.14 编译),再手动装 pwntools 依赖 + pwntools --no-deps
+    python3 -m pip install 'unicorn>=2.0.1.post1' capstone pyelftools requests z3-solver ROPgadget pyserial paramiko intervaltree sortedcontainers colorama packaging pymongo --break-system-packages && \
+    python3 -m pip install pwntools --no-deps --break-system-packages && \
+    python3 -m pip install angr --break-system-packages && \
+    sudo gem install one_gadget || true && \
     sudo npm install -g @playwright/cli@latest && \
     cd /tmp && playwright-cli install
 
