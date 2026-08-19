@@ -1,7 +1,7 @@
 FROM --platform=amd64 kalilinux/kali-rolling:latest
 
 # 固定 apt 源为 kali.download(已验证可用),彻底清掉 sources.list.d 的多余源(清华等 403)
-RUN sh -c 'echo "deb http://mirrors.aliyun.com/kali kali-rolling main non-free contrib" > /etc/apt/sources.list; rm -rf /etc/apt/sources.list.d' && \
+RUN sh -c 'echo "deb http://kali.download/kali kali-rolling main non-free contrib" > /etc/apt/sources.list; rm -rf /etc/apt/sources.list.d' && \
     apt update && \
     apt -y install kali-linux-headless && \
     apt clean && \
@@ -11,7 +11,7 @@ RUN useradd -m -s /bin/bash kali && \
     echo "kali ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 USER kali
 
-RUN sudo sh -c 'echo "deb http://mirrors.aliyun.com/kali kali-rolling main non-free contrib" > /etc/apt/sources.list' && \
+RUN sudo sh -c 'echo "deb http://kali.download/kali kali-rolling main non-free contrib" > /etc/apt/sources.list' && \
     sudo apt update && \
     sudo apt install -y bsdextrautils npm jq iputils-ping sshpass ncat rlwrap \
     bloodyad coercer enum4linux-ng pwncat chisel-common-binaries \
