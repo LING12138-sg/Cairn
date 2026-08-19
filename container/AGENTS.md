@@ -23,11 +23,11 @@
   * /home/kali/tools
   * /home/kali/knowledges
 * chisel 二进制在 /usr/share/chisel-common-binaries
+* ghidra 反编译器在 /opt/ghidra_12.1.3_PUBLIC,命令行反编译用 `/opt/ghidra_12.1.3_PUBLIC/support/analyzeHeadless`
 
-# 反弹 Shell / 数据外带 / 多层网络
-* **重要**： 你当前的对外 IP 是 **未填写**（部署时填真实 IP）
-* 你在容器里监听的端口，可通过该对外 IP 访问。反弹 Shell、数据外带、SSRF 回显、XXE 外带、恶意 Web 服务等需要回连的操作都使用该 IP
+# 反弹 Shell / 数据外带
+* 如题目需要接收回连（反弹 shell、SSRF 回显、XXE 外带等），使用你容器的对外 IP（部署时由主办方提供并写入环境）。绝大多数 CTF 题不需要反连，直接连靶机解题即可。
 
 # 其他
-* 需要持续运行或供后续阶段共享的交互式命令，在 **tmux** 会话中运行；输出结论时说明 tmux 会话信息（如持续运行的 HTTP 服务、nc 监听反弹 shell 等）
+* 需要持续运行或供后续阶段共享的交互式命令，在 **tmux** 会话中运行；输出结论时说明 tmux 会话信息
 * 专注当前题，不要过度无意义枚举浪费资源，有思路就推进；结论里说明 flag 的来源（证据）

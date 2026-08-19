@@ -76,6 +76,13 @@ RUN sudo npm install -g @openai/codex@0.118.0
 RUN sudo npm install -g @anthropic-ai/claude-code@2.1.234
 RUN sudo npm install -g @mariozechner/pi-coding-agent@0.73.1
 
+# ghidra 反编译器(逆向大题用)
+RUN cd /tmp && \
+    wget -q "https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.1.3_build/ghidra_12.1.3_PUBLIC_20260817.zip" -O ghidra.zip && \
+    sudo unzip -q ghidra.zip -d /opt && \
+    sudo rm -f ghidra.zip && \
+    sudo chmod -R o+rX /opt/ghidra_12.1.3_PUBLIC
+
 RUN sudo chmod +x /usr/local/bin/kerbrute
 RUN mkdir -p /home/kali/.config/nuclei && \
     echo >> /home/kali/.config/nuclei/config.yaml && \
